@@ -1,3 +1,5 @@
+# Code of Conduct
+
 Our team is committed to maintaining a respectful, inclusive, and professional working environment. This project should be a space where everyone feels valued and able to contribute effectively.
 
 **Respectful Interaction** 
