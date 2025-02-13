@@ -23,13 +23,13 @@ Members are expected to respond to messages within 24 hours on working days. If 
 
 All code must follow PEP8 style guidelines for Python. Meaningful commit messages should be provided for every GitHub commit. Documentation must be included for all significant features and changes to maintain clarity for the team.
 
-**Decision Making**
+### Decision Making
 
 Team decisions will be made through discussion and consensus when possible. Major decisions affecting the project’s direction will be addressed in group meetings, while minor decisions that do not impact the final outcome can be handled asynchronously. If disagreements arise, the team will aim for compromise, with majority agreement guiding the final decision.
 
 By signing below, we acknowledge that we have read and agree to abide by this contract:
 
-**Signatures:**
+### Signatures:
 
 Jane Shen
 
