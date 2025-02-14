@@ -1,5 +1,5 @@
 # Contributing to Our Project
-We welcome all contributions to this project! If you notice a bug, have a feature request, or want to improve the documentation, please [open an issue](<insert link to your GH issue tracker>) so we can discuss it.
+We welcome all contributions to this project! If you notice a bug, have a feature request, or want to improve the documentation, please [open an issue](https://github.com/j232shen/data551-project/issues) so we can discuss it.
 
 ## Contribution Guidelines
 - Follow the project’s coding standards (e.g., PEP8 for Python).
