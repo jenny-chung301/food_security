@@ -56,28 +56,27 @@ def get_years(country):
 default_country = all_countries[0]
 default_year = get_years(default_country)[0]
 
-#
-
-
 # Helper function for generating map
 def get_map(country, year, df=df):
     df_prep = df[df["country"] == country]
     df_grouped = (
         df_prep.groupby([df_prep["date"].dt.year, "admin2", "latitude", "longitude"])[
-            "usdprice"
+            "standardprice"
         ]
         .mean()
         .reset_index()
     )
-    df_grouped["usdprice"] = df_grouped["usdprice"].apply(lambda x: round(x, 3))
+    df_grouped["standardprice"] = df_grouped["standardprice"].apply(
+        lambda x: round(x, 3)
+    )
     df_grouped_year = df_grouped[df_grouped["date"] == year]
 
     fig = px.scatter_map(
         df_grouped_year,
         lat="latitude",
         lon="longitude",
-        size="usdprice",
-        color="usdprice",
+        size="standardprice",
+        color="standardprice",
         color_continuous_scale="Oranges",
         hover_name="admin2",
         hover_data={"latitude": False, "longitude": False},
@@ -514,9 +513,9 @@ def update_price_chart(selected_countries, year_range, selected_commodity):
         ]
 
     result = (
-        filtered_data.groupby(["country", "date"], as_index=False)["usdprice"]
+        filtered_data.groupby(["country", "date"], as_index=False)["standardprice"]
         .mean()
-        .rename(columns={"usdprice": "avg_usdprice"})
+        .rename(columns={"standardprice": "avg_usdprice"})
     )
 
     fig = px.line(
