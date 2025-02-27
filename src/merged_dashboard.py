@@ -38,46 +38,60 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # app layout
 app.layout = dbc.Container([
     dbc.Row([
-        # sidebar column (4 parts wide)
         dbc.Col([
-            html.H3("Filter Options", className="mb-4"),
+            dcc.Tabs(id='tabs', value='global', children=[
+                dcc.Tab(label='Global', value='global', children=[
+                    dbc.Row([
+                        # sidebar column (4 parts wide)
+                        dbc.Col([
+                            html.H3("Filter Options", className="mb-4"),
 
-            html.Label('Select Countries:', className="d-block"),
-            dcc.Dropdown(
-                id='country-dropdown',
-                options=[{'label': country, 'value': country} for country in all_countries],
-                value=['Russia', 'China', 'Vietnam', 'Thailand'],
-                multi=True
-            ),
-            html.Br(),
+                            html.Label('Select Countries:', className="d-block"),
+                            dcc.Dropdown(
+                                id='country-dropdown',
+                                options=[{'label': country, 'value': country} for country in all_countries],
+                                value=['Russia', 'China', 'Vietnam', 'Thailand'],
+                                multi=True
+                            ),
+                            html.Br(),
 
-            html.Label('Select Commodity:', className="d-block"),
-            dcc.Dropdown(
-                id='commodity-dropdown',
-                options=[{'label': commodity, 'value': commodity} for commodity in all_commodities],
-                value='All Commodities'
-            ),
-            html.Br(),
+                            html.Label('Select Commodity:', className="d-block"),
+                            dcc.Dropdown(
+                                id='commodity-dropdown',
+                                options=[{'label': commodity, 'value': commodity} for commodity in all_commodities],
+                                value='All Commodities'
+                            ),
+                            html.Br(),
 
-            html.Label('Select Year Range:', className="d-block"),
-            dcc.RangeSlider(
-                id='year-slider',
-                min=min_year,
-                max=max_year,
-                value=[min_year, max_year],
-                marks={year: str(year) for year in range(min_year, max_year + 1, 1)},
-                step=1
-            ),
-        ], width=4, className="d-flex flex-column"),
+                            html.Label('Select Year Range:', className="d-block"),
+                            dcc.RangeSlider(
+                                id='year-slider',
+                                min=min_year,
+                                max=max_year,
+                                value=[min_year, max_year],
+                                marks={year: str(year) for year in range(min_year, max_year + 1, 1)},
+                                step=1
+                            ),
+                        ], width=4, className="d-flex flex-column"),
 
-        # Graph column (8 parts wide)
-        dbc.Col([
-            html.H3("Commodity Price Trends", className="mb-4"),
-            dcc.Graph(id='price-chart'),
-            html.H3("Undernourishment Trends", className="mb-4"),
-            dcc.Graph(id='line-chart')
-        ], width=8, className="d-flex flex-column")
-    ])
+                        # Graph column (8 parts wide)
+                        dbc.Col([
+                            html.H3("Commodity Price Trends", className="mb-4"),
+                            dcc.Graph(id='price-chart'),
+                            html.H3("Undernourishment Trends", className="mb-4"),
+                            dcc.Graph(id='line-chart')
+                        ], width=8, className="d-flex flex-column")
+                    ])
+                ]),
+                
+                dcc.Tab(label='Country', value='country', children=[
+                    html.Div([
+                        html.H3("Country-Level Analysis (Coming Soon!)", className="mb-4")
+                    ])
+                ])
+            ], style={'width': '20%', 'line-height': '8px', 'align-items': 'center', 'margin-left': '0', 'margin-top': '30px', 'margin-bottom': '30px'}), # styling of tab row
+        ], width='full', style={'padding': '0px 50px'}) # width of column that holds all content + horizontal padding
+    ], justify="start") # left align tabs
 ], fluid=True)
 
 # callback to update country dropdown options dynamically based on commodity selection
