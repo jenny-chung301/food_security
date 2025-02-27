@@ -6,8 +6,8 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 
 # load data
-wfp = pd.read_parquet('data551-project/data/processed/wfp_preprocessed.parquet')
-fao = pd.read_csv('data551-project/data/raw/FAOSTAT_data_en_nutrition.csv')
+wfp = pd.read_parquet('../data/processed/wfp_preprocessed.parquet')
+fao = pd.read_csv('../data/raw/FAOSTAT_data_en_nutrition.csv')
 
 # get unique countries, years, and commodities for the dropdown/slider
 all_countries = sorted(wfp['country'].unique())
@@ -108,8 +108,6 @@ def update_price_chart(selected_countries, year_range, selected_commodity):
 
     if selected_commodity == 'Essential Commodities':
         filtered_data = filtered_data[filtered_data['commodity'].isin(essential_commodities)]
-    elif selected_commodity != 'All Commodities':
-        filtered_data = filtered_data[filtered_data['commodity'] == selected_commodity]
 
     result = filtered_data.groupby(['country', 'date'], as_index=False)['usdprice'].mean().rename(columns={'usdprice': 'avg_usdprice'})
 
@@ -118,11 +116,19 @@ def update_price_chart(selected_countries, year_range, selected_commodity):
                   height=500, color_discrete_sequence=px.colors.qualitative.Pastel)
 
     years = result['date'].dt.year.unique()
-    fig.update_layout(plot_bgcolor='rgba(240, 248, 255, 0.9)',
-                      xaxis=dict(title='Year', tickformat='%Y',
-                                 tickvals=pd.to_datetime([f'{year}-01-01' for year in years]),
-                                 ticktext=[str(year) for year in years]),
-                      yaxis=dict(title='Average Price (USD)'), hovermode='closest')
+    max_year = result['date'].max().year
+    fig.update_layout(
+        plot_bgcolor='rgba(240, 248, 255, 0.9)',
+        xaxis=dict(
+            title='Year',
+            tickmode='array',
+            tickvals=years,
+            ticktext=[str(year) for year in years],
+            range=[f'{start_year}-01-01', f'{max_year}-01-01'] # aligns x-axis ticks when we scale with slider
+        ),
+        yaxis=dict(title='Average Price (USD)'),
+        hovermode='closest'
+    )
     fig.update_traces(line=dict(width=2))
 
     return fig
@@ -130,23 +136,38 @@ def update_price_chart(selected_countries, year_range, selected_commodity):
 # callback to update undernourishment chart
 @app.callback(
     Output('line-chart', 'figure'),
-    [Input('country-dropdown', 'value')]
+    [Input('country-dropdown', 'value'),
+     Input('year-slider', 'value')]
 )
-def update_undernourishment_chart(selected_countries):
+def update_undernourishment_chart(selected_countries, year_range):
     if not selected_countries:
         return px.line(title="Share of the population that is undernourished (Please select a country)")
 
-    fao_filtered = fao_grouped[fao_grouped['Area'].isin(selected_countries)]
-    y_min = fao_filtered['Value'].min() * 0.95
-    y_max = fao_filtered['Value'].max() * 1.05
+    start_year, end_year = year_range
+    fao_filtered = fao_grouped[
+        (fao_grouped['Area'].isin(selected_countries)) &
+        (fao_grouped['Year'].between(start_year, end_year))
+    ]
 
-    fig = px.line(fao_filtered, x='Year', y='Value', color='Area', title="Share of the population that is undernourished",
+    fig = px.line(fao_filtered, x='Year', y='Value', color='Area', 
+                  title="Share of the population that is undernourished",
                   height=500, color_discrete_sequence=px.colors.qualitative.Pastel)
+
+    years = fao_filtered['Year'].unique()
     fig.update_layout(
         plot_bgcolor='rgba(240, 248, 255, 0.9)',
-        yaxis=dict(range=[y_min, y_max])
+        xaxis=dict(
+            title='Year',
+            tickmode='array',
+            tickvals=years,
+            ticktext=[str(year) for year in years]
+            # range=[start_year, end_year]
+        ),
+        yaxis=dict(title='Undernourishment (%)'),
+        hovermode='closest'
     )
     fig.update_traces(line=dict(width=2))
+
     return fig
 
 # run server
