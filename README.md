@@ -9,12 +9,6 @@ This dashboard provides insights into global food security by monitoring key met
 
 By interacting with the dashboard, users can explore food security visualizations and metrics across countries, detect trends, and support data-driven decisions to enhance food aid programs.
 
-
-Example sketch
-
-![dashBoard](./sketch_global.png "App Sketch - Global")
-![dashBoard](./sketch_country.png "App Sketch - Country")
-
 Dashboard output
 ![dashBoard](./global.png "App - Global")
 ![dashBoard](./country.png "App - Country")
