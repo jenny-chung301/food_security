@@ -1,18 +1,26 @@
 # Milestone 2 - Reflection
 
-In this milestone we have prototyped the three most important plots of the conceived dashboard: the map displaying varying commodity prices across the markets within a country, the average commodity prices over time per country, and the share of population that is undernourished over time per country. 
+For this milestone, we have prototyped the five key plots for the dashboard:
+1. Average commodity prices over time, by country
+2. The share of the population that is undernourished, by country and over time
+3. A map displaying food price volatility across country regions
+4. Price distributions for different commodity categories
+5. The top 20 most expensive commodities per region
 
-So far, most of the intended functionality for the three plots is implemented, including:
+So far, most of the intended functionality for these plots has been implemented, including:
 - Separation of plots into Global and Country tabs for different analysis levels
+- All plots have placeholder values for default states
+- All plots are able to dynamically update with changes to dropdown selections
 - Shared country dropdown and year range slider used to update both Global plots
-- All plots able to update with changes to dropdown selections
+- Interactivity, where clicking market indicators on the map updates the commodity category distributions and top 20 most expensive commodities for the selected region
+  
+Some bugs exist in terms of styling which will be amended by the next milestone:
+- Clearing all selections in the Select Country dropdown in the Global tab leaves plots empty
+- The map does not dynamically resize with the viewport
 
-Some bugs exist in terms of styling which will be amended by the next Milestone:
-- Switching from "All Commodities" to "Essential Commodities" in the Global tab causes the grid layout to change
-- Clearing all selections in the Select Country dropdown also causes the grid layout to change
-
-Future developments include:
-- Improving styling consistency across tabs and across different states
-- Improving interpretability with more titles, subtitles, and context of the dashboard
-- Improving visual aesthetic
-- Integrating the remaining plots specified in the project proposal
+Future developments will focus on:
+- Enhancing styling consistency across tabs and states
+- Improving interpretability with additional titles, subtitles, and context of the dashboard
+- Boosting usability with clear instructions on how to use the dashboard, as well as the ability to revert states
+- Enhancing visual aesthetic (e.g. tab containerization, better sizing and spacing of elements)
+- Integrating additional key statistics (e.g. food affordability index)
