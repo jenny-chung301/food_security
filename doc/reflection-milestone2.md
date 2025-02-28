@@ -11,6 +11,7 @@ So far, most of the intended functionality for these plots has been implemented,
 - Separation of plots into Global and Country tabs for different analysis levels
 - All plots have placeholder values for default states
 - All plots are able to dynamically update with changes to dropdown selections
+- Changing the commodity selection updates the available country options in the Global tab
 - Shared country dropdown and year range slider used to update both Global plots
 - Interactivity, where clicking market indicators on the map updates the commodity category distributions and top 20 most expensive commodities for the selected region
   
