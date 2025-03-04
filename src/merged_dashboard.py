@@ -56,6 +56,7 @@ def get_years(country):
 default_country = all_countries[0]
 default_year = get_years(default_country)[0]
 
+
 # Helper function for generating map
 def get_map(country, year, df=df):
     df_prep = df[df["country"] == country]
@@ -536,7 +537,8 @@ def update_price_chart(selected_countries, year_range, selected_commodity):
     years = result["date"].dt.year.unique()
     max_year = result["date"].max().year
     fig.update_layout(
-        plot_bgcolor="rgba(240, 248, 255, 0.9)",
+        # plot_bgcolor="rgba(240, 248, 255, 0.9)",
+        template="simple_white",  # add
         xaxis=dict(
             title="Year",
             tickmode="array",
@@ -547,10 +549,20 @@ def update_price_chart(selected_countries, year_range, selected_commodity):
                 f"{max_year}-01-01",
             ],  # aligns x-axis ticks when we scale with slider
         ),
-        yaxis=dict(title="Average Price (USD)"),
-        hovermode="closest",
+        yaxis=dict(
+            title="Average Price (USD)",
+            showgrid=True,  # add
+            gridcolor="LightGray",  # add
+            gridwidth=1,  # add
+            griddash="dash",  # add)
+            # hovermode="closest",
+        ),
+        hovermode="x unified",
     )
-    fig.update_traces(line=dict(width=2))
+    fig.update_traces(
+        line=dict(width=2),
+        hovertemplate=("%{fullData.name}: <b>%{y}</b><extra></extra>"),  # add
+    )
 
     return fig
 
@@ -576,11 +588,13 @@ def update_undernourishment_chart(selected_countries, year_range):
         height=450,
         width=700,
         color_discrete_sequence=px.colors.qualitative.Pastel,
+        markers=True,  # add
     )
 
     years = fao_filtered["Year"].unique()
     fig.update_layout(
-        plot_bgcolor="rgba(240, 248, 255, 0.9)",
+        # plot_bgcolor="rgba(240, 248, 255, 0.9)",
+        template="simple_white",  # add
         xaxis=dict(
             title="Year",
             tickmode="array",
@@ -588,10 +602,20 @@ def update_undernourishment_chart(selected_countries, year_range):
             ticktext=[str(year) for year in years],
             # range=[start_year, end_year]
         ),
-        yaxis=dict(title="Undernourishment (%)"),
-        hovermode="closest",
+        yaxis=dict(
+            title="Undernourishment (%)",
+            showgrid=True,  # add
+            gridcolor="LightGray",  # add
+            gridwidth=1,  # add
+            griddash="dash",  # add
+        ),
+        # hovermode="closest",
+        hovermode="x unified",  # add
     )
-    fig.update_traces(line=dict(width=2))
+    fig.update_traces(
+        line=dict(width=2),
+        hovertemplate=("%{fullData.name}: <b>%{y}</b><extra></extra>"),  # add
+    )
 
     return fig
 
