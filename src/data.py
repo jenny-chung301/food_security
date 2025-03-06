@@ -52,3 +52,7 @@ def get_globals(wfp):
 
 def get_years(df, country):
     return sorted(df[df["country"] == country]["date"].dt.year.unique(), reverse=True)
+
+
+def get_aff_years(df):
+    return sorted(df['year'].unique(), reverse=True)

@@ -7,10 +7,11 @@ from plots import (
     get_bar_plot,
     get_price_chart,
     get_undernourishment_chart,
+    get_hist
 )
 
 
-def register_callbacks(app, wfp, fao_grouped, essential_commodities):
+def register_callbacks(app, wfp, aff_index, fao_grouped, essential_commodities):
     # callback to update undernourishment chart
     @app.callback(
         Output("price-chart", "figure"),
@@ -114,3 +115,72 @@ def register_callbacks(app, wfp, fao_grouped, essential_commodities):
                     region = region_candidate
 
         return get_bar_plot(wfp, country, year, region)
+    
+    # callback to update histogram
+    @app.callback(
+        Output("aff-hist", "figure"),  # The figure output should be directly assigned to the `figure` attribute
+        [Input("year-dropdown", "value")]
+    )
+    def update_hist(selected_year):
+        return get_hist(aff_index, selected_year)
+
+    # callback to update summary statistics
+    @app.callback(
+        [Output("avg-aff-index", "children"),
+         Output("pct-countries-under-avg", "children"),
+         Output("avg-change-text", "children"),
+         Output("pct-change-text", "children"),
+         Output("avg-change-text", "style"),
+         Output("pct-change-text", "style")],
+        [Input("year-dropdown", "value")]
+    )
+    def update_summary_stats(selected_year):
+        prev_year = selected_year - 1
+
+        values = {}
+        for year in [selected_year, prev_year]:
+            if year not in aff_index['year'].values:
+                continue # skip if year is not in dataset
+
+            values[year] = {}
+
+            # filter data for specific year
+            subset = aff_index[aff_index['year'] == year]
+
+            avg_index = subset['affordability_ratio'].mean()
+            total_countries = len(subset)
+            num_under = len(subset[subset['affordability_ratio'] < avg_index])
+
+            values[year]['mean_index'] = subset['affordability_ratio'].mean()
+            values[year]['pct_under'] = (num_under / total_countries) * 100
+
+        curr_avg = values[selected_year]['mean_index']
+        curr_pct_under = values[selected_year]['pct_under']
+
+        # format the results
+        avg_aff_index_text = f"{curr_avg:.2f}"
+        pct_under_avg_text = f"{curr_pct_under:.1f}%"
+        
+        # calculate percentage changes if prev year exists
+        if prev_year in values:
+            prev_avg = values[prev_year]['mean_index']
+            prev_pct_under = values[prev_year]['pct_under']
+
+            avg_change = ((curr_avg - prev_avg) / prev_avg) * 100
+            pct_change = curr_pct_under - prev_pct_under
+
+            # Format the changes with the + sign for positive changes
+            avg_change_text = f"+{avg_change:.2f}%" if avg_change > 0 else f"{avg_change:.2f}%"
+            pct_change_text = f"+{pct_change:.2f}%" if pct_change > 0 else f"{pct_change:.2f}%"
+
+            # Determine color based on positive or negative change
+            avg_change_style = {"color": "green" if avg_change >= 0 else "red"}
+            pct_change_style = {"color": "green" if pct_change >= 0 else "red"}
+        else:
+            # if no prev year, leave empty
+            avg_change_text = ""
+            pct_change_text = ""
+            avg_change_style = {}
+            pct_change_style = {}
+
+        return avg_aff_index_text, pct_under_avg_text, avg_change_text, pct_change_text, avg_change_style, pct_change_style

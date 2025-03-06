@@ -4,9 +4,8 @@ import plotly.express as px
 # set the alt option for the large dataset
 alt.data_transformers.disable_max_rows()
 
-def get_hist(aff_index):
-    max_year = aff_index['year'].max()
-    filtered_data = aff_index[aff_index['year'] == max_year]
+def get_hist(aff_index, selected_year):
+    filtered_data = aff_index[aff_index['year'] == selected_year]
 
     fig = px.histogram(
         filtered_data,
@@ -19,7 +18,7 @@ def get_hist(aff_index):
 
     fig.update_layout(
         xaxis_title="Affordability Ratio",
-        yaxis_title="Count",
+        yaxis_title="Number of Countries",
         bargap=0.05
     )
 

@@ -2,7 +2,7 @@ import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
-from data import load_data, get_globals, get_years, ESSENTIAL_COMMODITIES
+from data import load_data, get_globals, get_years, get_aff_years, ESSENTIAL_COMMODITIES
 from plots import get_hist
 from callback import register_callbacks
 from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style
@@ -14,6 +14,8 @@ all_countries, min_year, max_year = get_globals(wfp)
 
 default_country = all_countries[0]
 default_year = get_years(wfp, default_country)[0]
+
+aff_years = get_aff_years(aff_index) # list of years in descending order; doesn't match wfp years
 
 
 # ================================= APP =================================
@@ -35,31 +37,45 @@ app.layout = dbc.Container([
                 dbc.Row([
                     # histogram
                     dbc.Col([
-                        html.H4("Distribution of Affordability Ratios (2024)"),
-                        html.P("lorem ipsum"),
-                        dcc.Graph(id="static-graph", figure=get_hist(aff_index))
+                        dbc.Row([
+                            dbc.Col([
+                                html.H4("Global Distribution of Affordability Ratios"),
+                                html.P("lorem ipsum")
+                            ], width=9),
+                            dbc.Col([
+                                dcc.Dropdown(
+                                    id="year-dropdown", value=max(aff_years), clearable=False,
+                                    options=[{"label": year, "value": year} for year in aff_years]
+                                )
+                            ], width=2)
+                        ]),
+                        dbc.Row(
+                            dcc.Graph(id="aff-hist")
+                        )
                     ], width=8, style={"margin": "1rem 0 0"}),
 
                     # summary statistics
                     dbc.Col([
                         html.Div([
-                            dbc.Row(html.H5("Total Countries")),
+                            dbc.Row(html.H5("Total Countries Included")),
                             dbc.Row([
-                                dbc.Col(html.H1("90"))
+                                dbc.Col(html.H1(f"{len(all_countries)}"))
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style),
                         html.Div([
                             dbc.Row(html.H5("Average Affordability Index")),
                             dbc.Row([
-                                dbc.Col(html.H1("0.71")), 
-                                dbc.Col(html.H5("+2.58%", style={"color": "green"}))
+                                dbc.Col(html.H1(id="avg-aff-index")), 
+                                dbc.Col(
+                                    html.H5(id="avg-change-text", style={"color": "green"})
+                                )
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style),
                         html.Div([
                             dbc.Row(html.H5("Countries Under Average Affordability")),
                             dbc.Row([
-                                dbc.Col(html.H1("70%")),
-                                dbc.Col(html.H5("-13.4%", style={"color": "red"}))
+                                dbc.Col(html.H1(id="pct-countries-under-avg")),
+                                dbc.Col(html.H5(id="pct-change-text", style={"color": "red"}))
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style)
                     ], width=4)
@@ -180,7 +196,7 @@ app.layout = dbc.Container([
     ], justify="start", style={"padding": "0px 50px"})
 ], fluid=True)
 
-register_callbacks(app, wfp, fao_grouped, ESSENTIAL_COMMODITIES)
+register_callbacks(app, wfp, aff_index, fao_grouped, ESSENTIAL_COMMODITIES)
 
 # run server
 if __name__ == "__main__":
