@@ -4,10 +4,28 @@ import plotly.express as px
 # set the alt option for the large dataset
 alt.data_transformers.disable_max_rows()
 
+def get_hist(aff_index, selected_year):
+    filtered_data = aff_index[aff_index['year'] == selected_year]
 
-def get_price_chart(
-    wfp, selected_countries, year_range, selected_commodity, essential_commodities
-):
+    fig = px.histogram(
+        filtered_data,
+        x='affordability_ratio',
+        nbins=30,  # Adjust the number of bins as needed
+        # title="Distribution of Affordability Ratios (Latest Year)",
+        labels={'affordability_ratio': 'Affordability Ratio'},
+        template='plotly_white'
+    )
+
+    fig.update_layout(
+        xaxis_title="Affordability Ratio",
+        yaxis_title="Number of Countries",
+        bargap=0.05
+    )
+
+    return fig
+
+
+def get_price_chart(wfp, selected_countries, year_range, selected_commodity, essential_commodities):
     if not selected_countries:
         return {}
 
@@ -38,8 +56,8 @@ def get_price_chart(
             "date": "Year",
             "country": "Country",
         },
-        height=450,
-        width=700,
+        height=350,
+        width=600,
         color_discrete_sequence=px.colors.qualitative.Pastel,
     )
 
@@ -89,8 +107,8 @@ def get_undernourishment_chart(fao_grouped, selected_countries, year_range):
         y="Value",
         color="Area",
         # title="Share of the population that is undernourished",
-        height=450,
-        width=700,
+        height=350,
+        width=600,
         color_discrete_sequence=px.colors.qualitative.Pastel,
         markers=True,  # add
     )
