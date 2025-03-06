@@ -67,7 +67,7 @@ app.layout = dbc.Container([
                             dbc.Row([
                                 dbc.Col(html.H1(id="avg-aff-index")), 
                                 dbc.Col(
-                                    html.H5(id="avg-change-text", style={"color": "green"})
+                                    html.H5(id="avg-change-text")
                                 )
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style),
@@ -75,7 +75,7 @@ app.layout = dbc.Container([
                             dbc.Row(html.H5("Countries Under Average Affordability")),
                             dbc.Row([
                                 dbc.Col(html.H1(id="pct-countries-under-avg")),
-                                dbc.Col(html.H5(id="pct-change-text", style={"color": "red"}))
+                                dbc.Col(html.H5(id="pct-change-text"))
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style)
                     ], width=4)
