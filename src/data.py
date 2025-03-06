@@ -22,6 +22,7 @@ def load_data():
     wfp = pd.read_parquet("../data/processed/wfp_preprocessed.parquet")
     # wfp = pd.read_parquet("../data/processed/newest_dataset.parquet")
     fao = pd.read_csv("../data/raw/FAOSTAT_data_en_nutrition.csv")
+    aff_index = pd.read_csv("../data/processed/affordability_index.csv")
 
     # preprocess
     fao["Value"] = (
@@ -38,7 +39,7 @@ def load_data():
         .agg(lambda x: set(x))
         .reset_index(name="countries")
     )
-    return wfp, fao, fao_grouped, commodity_country_set
+    return wfp, fao, fao_grouped, aff_index, commodity_country_set
 
 
 def get_globals(wfp):
