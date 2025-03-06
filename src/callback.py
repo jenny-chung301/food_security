@@ -1,4 +1,5 @@
 from dash.dependencies import Input, Output
+from dash.exceptions import PreventUpdate
 
 from data import get_years
 from plots import (
@@ -43,6 +44,8 @@ def register_callbacks(app, wfp, fao_grouped, essential_commodities):
         [Input("country-dropdown", "value"), Input("year-slider", "value")],
     )
     def update_undernourishment_chart(selected_countries, year_range):
+        if fao_grouped is None or fao_grouped.empty or not selected_countries:
+            raise PreventUpdate
         return get_undernourishment_chart(fao_grouped, selected_countries, year_range)
 
     # callback to update the map
@@ -97,7 +100,7 @@ def register_callbacks(app, wfp, fao_grouped, essential_commodities):
         """
         - If user changes country or year, show the entire bar plot for that selection.
         - If user clicks on a region in the map, filter the bar plot to that region.
-        - If that region doesn't exist in the new country/year, ignore it (show entire).
+        - If that region doesn't exist in the new country/year, ignore it (show entire)..
         """
         region = None
 
