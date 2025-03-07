@@ -40,7 +40,7 @@ app.layout = dbc.Container([
                         dbc.Row([
                             dbc.Col([
                                 html.H4("Global Distribution of Affordability Ratios"),
-                                html.P("lorem ipsum")
+                                html.P("Affordability ratio is calculated as (Local Price / Mean National Wage)")
                             ], width=9),
                             dbc.Col([
                                 dcc.Dropdown(
@@ -93,7 +93,8 @@ app.layout = dbc.Container([
                         dcc.Dropdown(
                             id="country-dropdown", multi=True, clearable=False,
                             options=[{"label": c, "value": c} for c in all_countries],
-                            value=["Russia", "China", "Vietnam", "Thailand"]
+                            # value=["Russia", "China", "Vietnam", "Thailand"]
+                            value=["Afghanistan", "Armenia", "Bangladesh", "Guinea"]
                         )
                     ], width=3),
 
@@ -112,7 +113,7 @@ app.layout = dbc.Container([
                             marks={year: str(year) for year in range(min_year, max_year + 1)},
                             step=1
                         )
-                    ], width=3)
+                    ], width=6)
                 ]),
 
                 # change in global commodity prices and undernourishment
@@ -163,6 +164,13 @@ app.layout = dbc.Container([
                         )
                     ], width=2)
                 ]),
+                 # Add a note for users
+                dbc.Row(
+                    html.Div(
+                        "Click a region on the map below to filter the box plot and bar plot.",
+                        style={"fontStyle": "italic", "marginBottom": "1rem"}
+                    )
+                ),
                 dbc.Row([
                     # ------------ MAP ------------
                     dbc.Col([
@@ -182,12 +190,12 @@ app.layout = dbc.Container([
                     dbc.Col([
                         html.Div([
                             html.H5("Price Distribution for Category of Commodity"),
-                            html.Iframe(id="boxplot-frame", style={"border": "0", "width": "100%", "height": "300px"})
+                            dcc.Graph(id="boxplot-frame", style={"border": "0", "width": "100%", "height": "300px"})
                         ]),
                         html.Br(),
                         html.Div([
-                            html.H5("Top 20 Commodities"),
-                            html.Iframe(id="bar-frame", style={"border": "0", "width": "100", "height": "310px", "overflow": "hidden"})
+                            html.H5("Top 20 Commodities by Average Price"),
+                            dcc.Graph(id="bar-frame", style={"border": "0", "width": "100%", "height": "310px", "overflow": "hidden"})
                         ])
                     ], width=7)
                 ])
@@ -200,4 +208,5 @@ register_callbacks(app, wfp, aff_index, fao_grouped, ESSENTIAL_COMMODITIES)
 
 # run server
 if __name__ == "__main__":
+    # app.run_server(debug=True, dev_tools_hot_reload=False)
     app.run_server(debug=True)

@@ -4,28 +4,42 @@ import plotly.express as px
 # set the alt option for the large dataset
 alt.data_transformers.disable_max_rows()
 
+# For the country tab
+COLOR_MAP = {
+    "cereals and tubers": "rgb(102, 197, 204)",
+    "miscellaneous food": "rgb(246, 207, 113)",
+    "pulses and nuts": "rgb(248, 156, 116)",
+    "vegetables and fruits": "rgb(220, 176, 242)",
+    "oil and fats": "rgb(135, 197, 95)",
+    "meat, fish and eggs": "rgb(158, 185, 243)",
+    "milk and dairy": "rgb(254, 136, 177)",
+}
+
+
 def get_hist(aff_index, selected_year):
-    filtered_data = aff_index[aff_index['year'] == selected_year]
+    filtered_data = aff_index[aff_index["year"] == selected_year]
 
     fig = px.histogram(
         filtered_data,
-        x='affordability_ratio',
+        x="affordability_ratio",
         nbins=30,  # Adjust the number of bins as needed
         # title="Distribution of Affordability Ratios (Latest Year)",
-        labels={'affordability_ratio': 'Affordability Ratio'},
-        template='plotly_white'
+        labels={"affordability_ratio": "Affordability Ratio"},
+        template="plotly_white",
     )
 
     fig.update_layout(
         xaxis_title="Affordability Ratio",
         yaxis_title="Number of Countries",
-        bargap=0.05
+        bargap=0.05,
     )
 
     return fig
 
 
-def get_price_chart(wfp, selected_countries, year_range, selected_commodity, essential_commodities):
+def get_price_chart(
+    wfp, selected_countries, year_range, selected_commodity, essential_commodities
+):
     if not selected_countries:
         return {}
 
@@ -45,6 +59,7 @@ def get_price_chart(wfp, selected_countries, year_range, selected_commodity, ess
         .mean()
         .rename(columns={"standardprice": "avg_usdprice"})
     )
+    result["avg_usdprice"] = result["avg_usdprice"].round(3)
 
     fig = px.line(
         result,
@@ -151,6 +166,7 @@ def get_map(df, country, year):
     )
     df_grouped["standardprice"] = df_grouped["standardprice"].round(3)
     df_grouped_year = df_grouped[df_grouped["date"] == year]
+    df_grouped_year["standardprice"] = df_grouped["standardprice"].fillna(0)
 
     fig = px.scatter_mapbox(
         df_grouped_year,
@@ -181,73 +197,83 @@ def get_map(df, country, year):
     return fig
 
 
-# drawing the box plot for categories
 def get_box_plot(df, country, year, region=None):
-
     df_box = df[(df["country"] == country) & (df["date"].dt.year == year)]
     if region is not None:
         df_box = df_box[df_box["admin2"] == region]
 
-    box = (
-        alt.Chart(df_box)
-        .mark_boxplot()
-        .encode(
-            x=alt.X(
-                "category:N",
-                axis=alt.Axis(
-                    labelAngle=20,
-                    labelFontSize=10,
-                    titleFontSize=15,
-                    title="Food Category",
-                ),
-            ),
-            y=alt.Y(
-                "standardprice:Q",
-                axis=alt.Axis(labelFontSize=10, titleFontSize=15),
-                title="Price in USD",
-            ),
-            color=alt.Color("category:N"),
-        )
-        .properties(width=400, height=200)
+    df_box["standardprice"] = df_box["standardprice"].round(3)
+
+    fig = px.box(
+        df_box,
+        x="category",
+        y="standardprice",
+        color="category",
+        color_discrete_map=COLOR_MAP,
+        labels={"category": "Food Category", "standardprice": "Average Price (USD)"},
     )
-    return box.to_html()
+
+    fig.update_layout(
+        template="simple_white",
+        width=800,
+        height=300,
+        margin=dict(l=40, r=40, t=40, b=40),
+        showlegend=False,
+        yaxis=dict(
+            title="Average Price (USD)",
+            showgrid=True,
+            gridcolor="LightGray",
+            gridwidth=1,
+            griddash="dash",
+        )
+    )
+    # rotate x-axis labels
+    # fig.update_xaxes(tickangle=20)
+
+    return fig
 
 
 def get_bar_plot(df, country, year, region=None):
-
-    df_bar = df[(df["country"] == country) & (df["date"].dt.year == year)][
-        ["admin2", "category", "commodity", "standardprice"]
-    ]
+    # Filter data
+    df_bar = df[(df["country"] == country) & (df["date"].dt.year == year)]
     if region is not None:
         df_bar = df_bar[df_bar["admin2"] == region]
 
+    # Group & average
     df_bar = (
         df_bar.groupby(["category", "commodity"])["standardprice"]
         .mean()
         .reset_index()
-        .sort_values("standardprice", ascending=False)[:20]
+        .sort_values("standardprice", ascending=False)
+        .head(20)
     )
-    df_bar["standardprice"] = df_bar["standardprice"].apply(lambda x: round(x, 3))
 
-    bar = (
-        alt.Chart(df_bar)
-        .mark_bar()
-        .encode(
-            x=alt.X(
-                "commodity:N",
-                axis=alt.Axis(
-                    labelAngle=20, labelFontSize=10, titleFontSize=15, title="Commodity"
-                ),
-            ).sort("-y"),
-            y=alt.Y(
-                "standardprice:Q",
-                axis=alt.Axis(labelFontSize=10, titleFontSize=15),
-                title="Price in USD",
-            ),
-            color=alt.Color("category:N"),
-            tooltip=["commodity", "standardprice"],
+    # Round prices
+    df_bar["standardprice"] = df_bar["standardprice"].round(3)
+
+    fig = px.bar(
+        df_bar,
+        x="commodity",
+        y="standardprice",
+        color="category",
+        color_discrete_map=COLOR_MAP,
+        labels={"standardprice": "Average Price (USD)", "commodity": "Commodity"},
+    )
+
+    fig.update_xaxes(
+        categoryorder="array", categoryarray=df_bar["commodity"].tolist(), tickangle=20
+    )
+
+    fig.update_layout(
+        template="simple_white",
+        height=300,
+        yaxis=dict(
+            title="Average Price (USD)",
+            showgrid=True,
+            gridcolor="LightGray",
+            gridwidth=1,
+            griddash="dash",
         )
-        .properties(width=400, height=200)
+        margin=dict(l=10, r=10, t=50, b=50),
     )
-
-    return bar.to_html()
+    return fig
