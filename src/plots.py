@@ -273,7 +273,7 @@ def get_bar_plot(df, country, year, region=None):
             gridcolor="LightGray",
             gridwidth=1,
             griddash="dash",
-        )
+        ),
         margin=dict(l=10, r=10, t=50, b=50),
     )
     return fig
