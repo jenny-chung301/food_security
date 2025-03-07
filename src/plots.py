@@ -225,7 +225,7 @@ def get_box_plot(df, country, year, region=None):
             gridcolor="LightGray",
             gridwidth=1,
             griddash="dash",
-        )
+        ),
     )
     # rotate x-axis labels
     # fig.update_xaxes(tickangle=20)
@@ -241,7 +241,7 @@ def get_bar_plot(df, country, year, region=None):
 
     # Group & average
     df_bar = (
-        df_bar.groupby(["category", "commodity"])["standardprice"]
+        df_bar.groupby(["category", "commodity", "Unit"])["standardprice"]
         .mean()
         .reset_index()
         .sort_values("standardprice", ascending=False)
@@ -258,11 +258,14 @@ def get_bar_plot(df, country, year, region=None):
         color="category",
         color_discrete_map=COLOR_MAP,
         labels={"standardprice": "Average Price (USD)", "commodity": "Commodity"},
+        hover_data={
+            "category": True,
+            "commodity": True,
+            "Unit": True,
+        },
     )
 
-    fig.update_xaxes(
-        categoryorder="array", categoryarray=df_bar["commodity"].tolist(), tickangle=20
-    )
+    fig.update_xaxes(categoryorder="array", categoryarray=df_bar["commodity"].tolist())
 
     fig.update_layout(
         template="simple_white",
