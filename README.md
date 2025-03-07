@@ -30,6 +30,8 @@ pip install pandas altair plotly dash dash-bootstrap-components
 To start the dashboard, run the following command:
 
 ```bash
+git clone https://github.com/j232shen/data551-project.git
+cd data551-project
 python src/app.py
 ```
 
@@ -46,7 +48,8 @@ http://127.0.0.1:8050/
 │   ├── app.py  # Main application file
 │   ├── data.py # Module for data processing
 │   ├── plot.py # Module for plotting
-│   └── callback.py # Module for callback funtions
+│   ├── callback.py # Module for callback funtions
+│   └── style.py # Module for css
 ├── data/        # Directory for dataset
 ├── README.md    # Project documentation
 └── .gitignore   # Git ignore file
