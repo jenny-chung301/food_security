@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 from data import load_data, get_globals, get_years, get_aff_years, ESSENTIAL_COMMODITIES
 from plots import get_hist
 from callback import register_callbacks
-from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style
+from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style, affo_country_style
 
 
 # Load data
@@ -188,6 +188,16 @@ app.layout = dbc.Container([
 
                     # ------------ Boxplot & Barplot ------------
                     dbc.Col([
+                        html.Div(
+                                [
+                                    dcc.Store(id="average-store", data=aff_index.to_dict("records")),
+                                    html.Div(
+                                        id="country-info",
+                                        style={"margin-top": "20px", "width": "100%"}), 
+
+                                ],
+                                    style= affo_country_style
+                                ),
                         html.Div([
                             html.H5("Price Distribution for Category of Commodity"),
                             dcc.Graph(id="boxplot-frame", style={"border": "0", "width": "100%", "height": "300px"})
@@ -197,7 +207,7 @@ app.layout = dbc.Container([
                             html.H5("Top 20 Commodities by Average Price"),
                             dcc.Graph(id="bar-frame", style={"border": "0", "width": "100%", "height": "310px", "overflow": "hidden"})
                         ])
-                    ], width=7)
+                    ], width=6)
                 ])
             ])
         ], id="tabs", active_tab="global", style=tabs_style)

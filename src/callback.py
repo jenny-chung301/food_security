@@ -1,6 +1,8 @@
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
-
+import dash_bootstrap_components as dbc
+from dash import dcc, html
+import dash
 from data import get_years
 from plots import (
     get_map,
@@ -202,3 +204,36 @@ def register_callbacks(app, wfp, aff_index, fao_grouped, essential_commodities):
             avg_change_style,
             pct_change_style,
         )
+ # Callback to update country-info based on selected country and year
+    @app.callback(
+        Output("country-info", "children"),
+        [Input("average-store", "data"), Input("country", "value"), Input("year", "value")]
+    )
+    def update_country_info(average_data, country, year):
+        if not average_data:
+            return html.P("No data available", className="text-center text-muted fs-4")
+        
+        index = next((item['affordability_index'] for item in average_data if item['country'] == country and item['year'] == year), None)
+
+        if index is None:
+            return html.P("No data available", className="text-center text-muted fs-4")
+        
+        return dbc.Card(
+        [
+            dbc.CardHeader("Affordability Index", className="text-center fw-bold"),
+            dbc.CardBody(
+                html.P(f"{index:.2f}", className="text-center fw-bold text-primary display-3"),
+                className="d-flex align-items-center justify-content-center",
+                style={"height": "150px"}
+            ),
+        ],
+        className="md-5 shadow-sm",  
+        style={
+            'margin-bottom': '20px',
+            'border': '0',  
+            'border-radius': '10px',
+            'height': '200px',
+            'width': '100%',
+            'box-shadow': '3px 3px 15px rgba(0, 0, 0, 0.2)' 
+        }
+    )

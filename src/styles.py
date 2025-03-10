@@ -37,6 +37,13 @@ map_style = {
     "padding": "0",
     "overflow": "hidden",
     "backgroundColor": "white",
-    "height": "600px",
+    "height": "900px",
     "width": "100%",
+}
+
+affo_country_style={
+    "border": "0",
+    "width": "100%",
+    "height": "310px",
+    "overflow": "hidden",
 }
