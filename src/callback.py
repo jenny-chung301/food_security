@@ -213,27 +213,42 @@ def register_callbacks(app, wfp, aff_index, fao_grouped, essential_commodities):
         if not average_data:
             return html.P("No data available", className="text-center text-muted fs-4")
         
-        index = next((item['affordability_index'] for item in average_data if item['country'] == country and item['year'] == year), None)
+        current_index = next((item['affordability_index'] for item in average_data if item['country'] == country and item['year'] == year), None)
 
-        if index is None:
+        previous_index = next((item['affordability_index'] for item in average_data if item['country'] == country and item['year'] == year - 1), None)
+
+        if current_index is None:
             return html.P("No data available", className="text-center text-muted fs-4")
-        
+
+        if previous_index is not None and previous_index != 0:
+            yoy_growth = ((current_index - previous_index) / previous_index) * 100
+            yoy_text = f"YoY Growth: {yoy_growth:.2f}%"
+            yoy_color = "text-success" if yoy_growth > 0 else "text-danger" if yoy_growth < 0 else "text-muted"
+        else:
+            yoy_text = "YoY Growth: N/A"
+            yoy_color = "text-muted"
+
         return dbc.Card(
-        [
-            dbc.CardHeader("Affordability Index", className="text-center fw-bold"),
-            dbc.CardBody(
-                html.P(f"{index:.2f}", className="text-center fw-bold text-primary display-3"),
-                className="d-flex align-items-center justify-content-center",
-                style={"height": "150px"}
-            ),
-        ],
-        className="md-5 shadow-sm",  
-        style={
-            'margin-bottom': '20px',
-            'border': '0',  
-            'border-radius': '10px',
-            'height': '200px',
-            'width': '100%',
-            'box-shadow': '3px 3px 15px rgba(0, 0, 0, 0.2)' 
-        }
-    )
+            [
+                dbc.CardHeader(
+                            html.H5(f"Affordability Index for {country}", className="text-center fw-bold")
+                        ),
+                dbc.CardBody(
+                    [
+                        html.P(f"{current_index:.2f}", className="text-center fw-bold text-primary display-3"),
+                        html.P(yoy_text, className=f"text-center fw-bold {yoy_color} fs-5"),
+                    ],
+                    className="d-flex flex-column align-items-center justify-content-center",
+                    style={"height": "150px"}
+                ),
+            ],
+            className="md-5 shadow-sm",
+            style={
+                'margin-bottom': '20px',
+                'border': '0',
+                'border-radius': '10px',
+                'height': '200px',
+                'width': '100%',
+                'box-shadow': '3px 3px 15px rgba(0, 0, 0, 0.2)'
+            }
+        )

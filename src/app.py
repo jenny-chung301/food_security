@@ -63,7 +63,27 @@ app.layout = dbc.Container([
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style),
                         html.Div([
-                            dbc.Row(html.H5("Average Affordability Index")),
+                             dbc.Row([html.Div([html.H5("Average Affordability Index",style={"display": "inline-block", "margin-right": "5px"}),
+                                            html.Sup("?", id="avg-change-info", style={
+                                            "color": "white",
+                                            "background-color": "#777", 
+                                            "cursor": "pointer",
+                                            "font-size": "0.8em",
+                                            "vertical-align": "super",
+                                            "border-radius": "50%", 
+                                            "padding": "2px 5px",
+                                            "display": "inline-block",
+                                            "text-align": "center",
+                                            "width": "16px",  
+                                            "height": "16px",
+                                            "line-height": "12px",  
+                                        }),
+                                        dbc.Tooltip(
+                                            "Average food affordability in developing countries—higher values indicate better affordability.",
+                                            target="avg-change-info",
+                                            placement="right"
+                                        )], style={"display": "flex", "align-items": "center"}
+                                        )]),
                             dbc.Row([
                                 dbc.Col(html.H1(id="avg-aff-index")), 
                                 dbc.Col(
