@@ -3,3 +3,5 @@ plotly
 dash
 dash_bootstrap_components
 gunicorn
+pyarrow
+fastparquet
