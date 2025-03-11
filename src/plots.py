@@ -269,6 +269,7 @@ def get_bar_plot(df, country, year, region=None):
 
     fig.update_layout(
         template="simple_white",
+        width=800,
         height=300,
         yaxis=dict(
             title="Average Price (USD)",
