@@ -1,5 +1,5 @@
+import os
 import pandas as pd
-
 
 # Define constants
 ESSENTIAL_COMMODITIES = [
@@ -19,9 +19,12 @@ ESSENTIAL_COMMODITIES = [
 def load_data():
 
     # load data
-    wfp = pd.read_parquet("../data/processed/wfp_preprocessed.parquet")
-    fao = pd.read_csv("../data/raw/FAOSTAT_data_en_nutrition.csv")
-    aff_index = pd.read_csv("../data/processed/affordability_index.csv")
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    DATA_PATH = os.path.join(BASE_DIR, "..", "data", "processed")
+
+    wfp = pd.read_parquet(f"{DATA_PATH}/wfp_preprocessed.parquet")
+    fao = pd.read_csv(f"{DATA_PATH}/FAOSTAT_data_en_nutrition.csv")
+    aff_index = pd.read_csv("{DATA_PATH}/affordability_index.csv")
 
     # preprocess
     fao["Value"] = (
