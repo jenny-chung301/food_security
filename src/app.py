@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 from data import load_data, get_globals, get_years, get_aff_years, ESSENTIAL_COMMODITIES
 from plots import get_hist
 from callback import register_callbacks
-from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style, affo_country_style, bar_box_style
+from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style, affo_country_style, bar_box_style, tooltip_style
 
 
 # Load data
@@ -26,7 +26,9 @@ app = dash.Dash(
 
 app.layout = dbc.Container([
     # header
-    dbc.Row(),
+    html.Div([
+        html.H1("Global Food Security Dashboard")
+    ]),
 
     # tabs
     dbc.Row([
@@ -62,35 +64,25 @@ app.layout = dbc.Container([
                                 dbc.Col(html.H1(f"{len(all_countries)}"))
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style),
+
                         html.Div([
-                             dbc.Row([html.Div([html.H5("Average Affordability Index",style={"display": "inline-block", "margin-right": "5px"}),
-                                            html.Sup("?", id="avg-change-info", style={
-                                            "color": "white",
-                                            "background-color": "#777", 
-                                            "cursor": "pointer",
-                                            "font-size": "0.8em",
-                                            "vertical-align": "super",
-                                            "border-radius": "50%", 
-                                            "padding": "2px 5px",
-                                            "display": "inline-block",
-                                            "text-align": "center",
-                                            "width": "16px",  
-                                            "height": "16px",
-                                            "line-height": "12px",  
-                                        }),
-                                        dbc.Tooltip(
-                                            "Average food affordability in developing countries—higher values indicate better affordability.",
-                                            target="avg-change-info",
-                                            placement="right"
-                                        )], style={"display": "flex", "align-items": "center"}
-                                        )]),
+                            dbc.Row([
+                                html.Div([
+                                    html.H5("Average Affordability Index", style={"display": "inline-block", "margin-right": "5px"}),
+                                    html.Sup("?", id="avg-change-info", style=tooltip_style),
+                                    dbc.Tooltip(
+                                        "Average food affordability in developing countries—higher values indicate better affordability.",
+                                        target="avg-change-info",
+                                        placement="right"
+                                    )
+                                ], style={"display": "flex", "align-items": "center"})
+                            ]),
                             dbc.Row([
                                 dbc.Col(html.H1(id="avg-aff-index")), 
-                                dbc.Col(
-                                    html.H5(id="avg-change-text")
-                                )
+                                dbc.Col(html.H5(id="avg-change-text"))
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style),
+
                         html.Div([
                             dbc.Row(html.H5("Countries Under Average Affordability")),
                             dbc.Row([
@@ -208,21 +200,17 @@ app.layout = dbc.Container([
 
                     # ------------ Boxplot & Barplot ------------
                     dbc.Col([
-                        html.Div(
-                                [
-                                    dcc.Store(id="average-store", data=aff_index.to_dict("records")),
-                                    html.Div(
-                                        id="country-info",
-                                        style={"margin-top": "20px", "width": "100%"}), 
-
-                                ],
-                                    style= affo_country_style
-                                ),
+                        html.Div([
+                            dcc.Store(id="average-store", data=aff_index.to_dict("records")),
+                            html.Div(id="country-info",style={"margin-top": "20px", "width": "100%"}) 
+                        ], style=affo_country_style),
+                        
                         html.Div([
                             html.H5("Price Distribution for Category of Commodity"),
                             dcc.Graph(id="boxplot-frame", style=bar_box_style)
                         ]),
                         html.Br(),
+
                         html.Div([
                             html.H5("Top 20 Commodities by Average Price"),
                             dcc.Graph(id="bar-frame", style=bar_box_style)
