@@ -227,3 +227,4 @@ register_callbacks(app, wfp, aff_index, fao_grouped, ESSENTIAL_COMMODITIES)
 # run server
 if __name__ == "__main__":
     app.run_server(debug=False, dev_tools_hot_reload=False)
+    
