@@ -1,5 +1,6 @@
 import altair as alt
 import plotly.express as px
+import plotly.graph_objects as go
 
 # set the alt option for the large dataset
 alt.data_transformers.disable_max_rows()
@@ -179,15 +180,63 @@ def get_map(df, country, year):
         hover_data={"latitude": False, "longitude": False},
         zoom=5,
         custom_data=["admin2"],
-        mapbox_style="open-street-map",  # carto-positron
+        mapbox_style="open-street-map",
     )
+    # For dummy legend
+    min_color = "rgb(255,245,235)"  # Light orange (lower price)
+    max_color = "rgb(127,39,4)"  # Dark orange (higher price)
+
+    dummy_lat = -90
+    dummy_lon = 0
+
+    # Dummy trace for higher prices
+    fig.add_trace(
+        go.Scattermapbox(
+            lat=[dummy_lat],
+            lon=[dummy_lon],
+            mode="markers",
+            marker=dict(size=10, color=max_color, opacity=1),
+            name="Higher Price",
+            showlegend=True,
+            hoverinfo="none",
+        )
+    )
+
+    # Dummy trace for lower prices
+    fig.add_trace(
+        go.Scattermapbox(
+            lat=[dummy_lat],
+            lon=[dummy_lon],
+            mode="markers",
+            marker=dict(size=10, color=min_color, opacity=1),
+            name="Lower Price",
+            showlegend=True,
+            hoverinfo="none",
+        )
+    )
+
     fig.update_layout(
         autosize=True,
         margin={"r": 0, "t": 0, "l": 0, "b": 0},
         coloraxis_showscale=False,
-        showlegend=False,
+        showlegend=True,
+        legend=dict(
+            # title="Price Level",
+            orientation="h",
+            yanchor="top",
+            y=0.98,  # Top
+            xanchor="left",
+            x=0.02,  # # Left
+            bgcolor="rgba(255, 255, 255, 0.8)",
+            bordercolor="rgba(255, 255, 255, 0.8)",
+            borderwidth=1,
+            itemclick=False,
+            itemdoubleclick=False,
+        ),
+        legend_itemsizing="constant",
     )
     fig.update_traces(
+        selector=dict(type="scattermapbox", showlegend=False),
         hoverlabel=dict(
             bordercolor="rgba(0,0,0,0)",
             font=dict(color="black"),
