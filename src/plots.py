@@ -1,9 +1,6 @@
 import plotly.express as px
 import plotly.graph_objects as go
 
-# set the alt option for the large dataset
-alt.data_transformers.disable_max_rows()
-
 # For the country tab
 COLOR_MAP = {
     "cereals and tubers": "rgb(102, 197, 204)",
