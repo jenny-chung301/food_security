@@ -46,3 +46,18 @@ affo_country_style = {
 }
 
 bar_box_style = {"border": "0", "width": "100%", "height": "300px"}
+
+tooltip_style = {
+    "color": "white",
+    "background-color": "#777", 
+    "cursor": "pointer",
+    "font-size": "0.8em",
+    "vertical-align": "super",
+    "border-radius": "50%", 
+    "padding": "2px 5px",
+    "display": "inline-block",
+    "text-align": "center",
+    "width": "16px",  
+    "height": "16px",
+    "line-height": "12px"                                     
+}

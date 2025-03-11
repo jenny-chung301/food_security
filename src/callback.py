@@ -156,11 +156,11 @@ def register_callbacks(app, wfp, aff_index, fao_grouped, essential_commodities):
             # filter data for specific year
             subset = aff_index[aff_index["year"] == year]
 
-            avg_index = subset["affordability_ratio"].mean()
+            avg_index = subset["affordability_index"].mean()
             total_countries = len(subset)
-            num_under = len(subset[subset["affordability_ratio"] < avg_index])
+            num_under = len(subset[subset["affordability_index"] < avg_index])
 
-            values[year]["mean_index"] = subset["affordability_ratio"].mean()
+            values[year]["mean_index"] = subset["affordability_index"].mean()
             values[year]["pct_under"] = (num_under / total_countries) * 100
 
         curr_avg = values[selected_year]["mean_index"]
@@ -204,7 +204,8 @@ def register_callbacks(app, wfp, aff_index, fao_grouped, essential_commodities):
             avg_change_style,
             pct_change_style,
         )
- # Callback to update country-info based on selected country and year
+    
+    # Callback to update country-info based on selected country and year
     @app.callback(
         Output("country-info", "children"),
         [Input("average-store", "data"), Input("country", "value"), Input("year", "value")]
