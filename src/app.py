@@ -2,10 +2,10 @@ import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
-from data import load_data, get_globals, get_years, get_aff_years, ESSENTIAL_COMMODITIES
-from plots import get_hist
-from callback import register_callbacks
-from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style, affo_country_style, bar_box_style, tooltip_style
+from .data import load_data, get_globals, get_years, get_aff_years, ESSENTIAL_COMMODITIES
+from .plots import get_hist
+from .callback import register_callbacks
+from .styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style, affo_country_style, bar_box_style, tooltip_style
 
 
 # Load data
