@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 from data import load_data, get_globals, get_years, get_aff_years, ESSENTIAL_COMMODITIES
 from plots import get_hist
 from callback import register_callbacks
-from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style
+from styles import tabs_style, stat_card_container_style, stat_card_row_style, graph_container_style, map_style, double_graph_style, affo_country_style, bar_box_style
 
 
 # Load data
@@ -40,7 +40,7 @@ app.layout = dbc.Container([
                         dbc.Row([
                             dbc.Col([
                                 html.H4("Global Distribution of Affordability Ratios"),
-                                html.P("lorem ipsum")
+                                html.P("Affordability ratio is calculated as (Local Price / Mean National Wage)")
                             ], width=9),
                             dbc.Col([
                                 dcc.Dropdown(
@@ -63,7 +63,27 @@ app.layout = dbc.Container([
                             ], style=stat_card_row_style)
                         ], style=stat_card_container_style),
                         html.Div([
-                            dbc.Row(html.H5("Average Affordability Index")),
+                             dbc.Row([html.Div([html.H5("Average Affordability Index",style={"display": "inline-block", "margin-right": "5px"}),
+                                            html.Sup("?", id="avg-change-info", style={
+                                            "color": "white",
+                                            "background-color": "#777", 
+                                            "cursor": "pointer",
+                                            "font-size": "0.8em",
+                                            "vertical-align": "super",
+                                            "border-radius": "50%", 
+                                            "padding": "2px 5px",
+                                            "display": "inline-block",
+                                            "text-align": "center",
+                                            "width": "16px",  
+                                            "height": "16px",
+                                            "line-height": "12px",  
+                                        }),
+                                        dbc.Tooltip(
+                                            "Average food affordability in developing countries—higher values indicate better affordability.",
+                                            target="avg-change-info",
+                                            placement="right"
+                                        )], style={"display": "flex", "align-items": "center"}
+                                        )]),
                             dbc.Row([
                                 dbc.Col(html.H1(id="avg-aff-index")), 
                                 dbc.Col(
@@ -93,7 +113,8 @@ app.layout = dbc.Container([
                         dcc.Dropdown(
                             id="country-dropdown", multi=True, clearable=False,
                             options=[{"label": c, "value": c} for c in all_countries],
-                            value=["Russia", "China", "Vietnam", "Thailand"]
+                            # value=["Russia", "China", "Vietnam", "Thailand"]
+                            value=["Afghanistan", "Armenia", "Bangladesh", "Guinea"]
                         )
                     ], width=3),
 
@@ -112,7 +133,7 @@ app.layout = dbc.Container([
                             marks={year: str(year) for year in range(min_year, max_year + 1)},
                             step=1
                         )
-                    ], width=3)
+                    ], width=6)
                 ]),
 
                 # change in global commodity prices and undernourishment
@@ -163,6 +184,13 @@ app.layout = dbc.Container([
                         )
                     ], width=2)
                 ]),
+                 # Add a note for users
+                dbc.Row(
+                    html.Div(
+                        "Click a region on the map below to filter the box plot and bar plot.",
+                        style={"fontStyle": "italic", "marginBottom": "1rem"}
+                    )
+                ),
                 dbc.Row([
                     # ------------ MAP ------------
                     dbc.Col([
@@ -180,16 +208,26 @@ app.layout = dbc.Container([
 
                     # ------------ Boxplot & Barplot ------------
                     dbc.Col([
+                        html.Div(
+                                [
+                                    dcc.Store(id="average-store", data=aff_index.to_dict("records")),
+                                    html.Div(
+                                        id="country-info",
+                                        style={"margin-top": "20px", "width": "100%"}), 
+
+                                ],
+                                    style= affo_country_style
+                                ),
                         html.Div([
                             html.H5("Price Distribution for Category of Commodity"),
-                            html.Iframe(id="boxplot-frame", style={"border": "0", "width": "100%", "height": "300px"})
+                            dcc.Graph(id="boxplot-frame", style=bar_box_style)
                         ]),
                         html.Br(),
                         html.Div([
-                            html.H5("Top 20 Commodities"),
-                            html.Iframe(id="bar-frame", style={"border": "0", "width": "100", "height": "310px", "overflow": "hidden"})
+                            html.H5("Top 20 Commodities by Average Price"),
+                            dcc.Graph(id="bar-frame", style=bar_box_style)
                         ])
-                    ], width=7)
+                    ], width=6)
                 ])
             ])
         ], id="tabs", active_tab="global", style=tabs_style)
@@ -200,4 +238,5 @@ register_callbacks(app, wfp, aff_index, fao_grouped, ESSENTIAL_COMMODITIES)
 
 # run server
 if __name__ == "__main__":
+    # app.run_server(debug=True, dev_tools_hot_reload=False)
     app.run_server(debug=True)

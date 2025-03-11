@@ -20,7 +20,6 @@ def load_data():
 
     # load data
     wfp = pd.read_parquet("../data/processed/wfp_preprocessed.parquet")
-    # wfp = pd.read_parquet("../data/processed/newest_dataset.parquet")
     fao = pd.read_csv("../data/raw/FAOSTAT_data_en_nutrition.csv")
     aff_index = pd.read_csv("../data/processed/affordability_index.csv")
 
@@ -55,4 +54,4 @@ def get_years(df, country):
 
 
 def get_aff_years(df):
-    return sorted(df['year'].unique(), reverse=True)
+    return sorted(df["year"].unique(), reverse=True)
