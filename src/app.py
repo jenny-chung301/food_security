@@ -21,6 +21,7 @@ aff_years = get_aff_years(aff_index) # list of years in descending order; doesn'
 app = dash.Dash(
     __name__, title='Global Food Security', external_stylesheets=[dbc.themes.ZEPHYR, dbc.icons.FONT_AWESOME]
 )
+server = app.server
 
 app.layout = dbc.Container([
     # Header section
