@@ -3,8 +3,8 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 import dash
-from data import get_years
-from plots import (
+from .data import get_years
+from .plots import (
     get_map,
     get_box_plot,
     get_bar_plot,

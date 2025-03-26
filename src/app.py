@@ -2,9 +2,9 @@ import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
-from data import load_data, get_globals, get_years, get_aff_years, STAPLE_COMMODITIES
-from callback import register_callbacks
-from styles import *
+from .data import load_data, get_globals, get_years, get_aff_years, STAPLE_COMMODITIES
+from .callback import register_callbacks
+from .styles import *
 
 
 # Load data
